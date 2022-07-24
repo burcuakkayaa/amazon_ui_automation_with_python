@@ -1,5 +1,6 @@
 from selenium.webdriver import ActionChains, Keys
-from selenium.webdriver.common.by import By
+
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -11,8 +12,10 @@ class BasePage:
     it contains all the generic methods and utilities for all pages"""
 
     def __init__(self, driver):
-        self.driver = driver
+        self.driver: WebDriver = driver
         self.wait = WebDriverWait(self.driver, timeout=5)
+
+    _product_name = None
 
     def get_web_element(self, locator):
         element = self.driver.find_element(locator[0], locator[1])
@@ -42,16 +45,28 @@ class BasePage:
         return self.wait.until(expected_conditions.presence_of_element_located(locator)).text
 
     def element_is_presence(self, locator):
-        return bool(self.wait.until(expected_conditions.presence_of_element_located(locator)))
+        try:
+            return bool(self.wait.until(expected_conditions.presence_of_element_located(locator)))
+        except:
+            return False
 
     def elements_are_presence(self, locator):
-        return bool(self.wait.until(expected_conditions.presence_of_all_elements_located(locator)))
+        try:
+            return bool(self.wait.until(expected_conditions.presence_of_all_elements_located(locator)))
+        except:
+            return False
 
     def element_is_visible(self, locator):
-        return bool(self.wait.until(expected_conditions.visibility_of_element_located(locator)))
+        try:
+            return bool(self.wait.until(expected_conditions.visibility_of_element_located(locator)))
+        except:
+            return False
 
     def element_is_displayed(self, locator):
-        return self.wait.until(expected_conditions.element_to_be_clickable(locator)).is_displayed()
+        try:
+            return self.wait.until(expected_conditions.element_to_be_clickable(locator)).is_displayed()
+        except:
+            return False
 
     def element_is_enabled(self, locator):
         return self.wait.until(expected_conditions.element_to_be_clickable(locator)).is_enabled()
@@ -110,7 +125,8 @@ class BasePage:
         action = ActionChains(self.driver)
         action.click_and_hold(element)
 
-    def scroll_page_down(self, locator):
-        action = ActionChains(self.driver)
-        element = self.get_web_element(locator)
-        action.send_keys(Keys.PAGE_DOWN).scroll_to_element(element).perform()
+    def scroll_page_down(self):
+        self.driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+
+    def scroll_page_down_with(self, scroll):
+        self.driver.execute_script("window.scrollTo(0," + str(scroll) + ")")
