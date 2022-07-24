@@ -15,7 +15,8 @@ class BasePage:
         self.wait = WebDriverWait(self.driver, timeout=5)
 
     def get_web_element(self, locator):
-        return self.driver.find_element(locator[0], locator[1])
+        element = self.driver.find_element(locator[0], locator[1])
+        return element
 
     def get_web_elements(self, locator):
         element_list = self.driver.find_elements(locator[0], locator[1])
