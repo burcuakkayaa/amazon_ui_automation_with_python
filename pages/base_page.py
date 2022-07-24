@@ -1,3 +1,5 @@
+from selenium.webdriver import ActionChains, Keys
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -13,10 +15,11 @@ class BasePage:
         self.wait = WebDriverWait(self.driver, timeout=5)
 
     def get_web_element(self, locator):
-        return self.driver.find_element(locator)
+        return self.driver.find_element(locator[0], locator[1])
 
     def get_web_elements(self, locator):
-        return self.driver.find_elements(locator)
+        element_list = self.driver.find_elements(locator[0], locator[1])
+        return element_list
 
     def force_click(self, locator):
         element = self.get_web_element(locator)
@@ -40,6 +43,9 @@ class BasePage:
     def element_is_presence(self, locator):
         return bool(self.wait.until(expected_conditions.presence_of_element_located(locator)))
 
+    def elements_are_presence(self, locator):
+        return bool(self.wait.until(expected_conditions.presence_of_all_elements_located(locator)))
+
     def element_is_visible(self, locator):
         return bool(self.wait.until(expected_conditions.visibility_of_element_located(locator)))
 
@@ -62,8 +68,11 @@ class BasePage:
     def wait_for_jquery_load(self):
         self.driver.execute_script("return jQuery.active==0")
 
-    def scroll_in_the_middle_of_element(self, locator):
+    def scroll_in_the_middle_of_locator(self, locator):
         element = self.get_web_element(locator)
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center', inline: 'nearest'})", element)
+
+    def scroll_in_the_middle_of_element(self, element):
         self.driver.execute_script("arguments[0].scrollIntoView({block: 'center', inline: 'nearest'})", element)
 
     def clickable_and_click(self, locator):
@@ -89,3 +98,18 @@ class BasePage:
 
     def url_to_be(self, url):
         self.wait.until(expected_conditions.url_to_be(url), "Expected url: " + self.driver.current_url)
+
+    def action_click(self, locator):
+        element = self.get_web_element(locator)
+        action = ActionChains(self.driver)
+        action.click(element)
+
+    def click_and_hold(self, locator):
+        element = self.get_web_elements(locator)
+        action = ActionChains(self.driver)
+        action.click_and_hold(element)
+
+    def scroll_page_down(self, locator):
+        action = ActionChains(self.driver)
+        element = self.get_web_element(locator)
+        action.send_keys(Keys.PAGE_DOWN).scroll_to_element(element).perform()

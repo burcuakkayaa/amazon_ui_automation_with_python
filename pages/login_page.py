@@ -13,7 +13,7 @@ class LoginPage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
 
-    def user_signs_up(self):
+    def user_fills_email_and_password(self):
         self.element_is_visible(self.EMAIL_TEXT_AREA)
         self.send_key(self.EMAIL_TEXT_AREA, TestData.EMAIL)
         self.clickable_and_click(self.CONTINUE_BUTTON)

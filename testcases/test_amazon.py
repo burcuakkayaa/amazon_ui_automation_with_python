@@ -1,7 +1,10 @@
 import pytest
 
+from configfiles.config import TestData
+from pages.category_page import CategoryPage
 from pages.home_page import HomePage
 from pages.login_page import LoginPage
+from pages.product_details_page import ProductDetailsPage
 
 
 @pytest.mark.usefixtures("test_setup")
@@ -9,9 +12,19 @@ class TestAddToWishList():
     def test_amazon_add_to_wish_list(self):
         home_page = HomePage(self.driver)
         login_page = LoginPage(self.driver)
+        category_page = CategoryPage(self.driver)
+        product_details_page = ProductDetailsPage(self.driver)
 
-        home_page.user_is_on_homepage("amazon")
-        home_page.user_see_true_page_title()
-        home_page.user_clicks_sign_in()
-        login_page.user_signs_up()
+        home_page.user_is_on_homepage(TestData.PAGE_NAME)
+        home_page.verify_page_title()
+
+        # home_page.user_clicks_sign_in()
+        # login_page.user_fills_email_and_password()
+
+        home_page.user_searches(TestData.SEARCH)
+        category_page.verify_search_results()
+        category_page.user_clicks_search_result(TestData.PRODUCT_NUMBER)
+
+        product_details_page.verifyOpenProductDetailsPage(TestData.SEARCH, TestData.PRODUCT_NUMBER)
+        product_details_page.add_to_wishlist()
 

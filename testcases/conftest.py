@@ -14,8 +14,9 @@ def test_setup(request):
     if request.param == "chrome":
         options = webdriver.ChromeOptions()
         options.add_argument("start-maximized")
-        #options.add_argument('disable-infobars')
+        options.add_argument('disable-infobars')
         options.add_argument("--disable-extensions")
+        options.add_experimental_option('useAutomationExtension', False)
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), chrome_options=options)
     elif request.param == "firefox":
         driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()))
